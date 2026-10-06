@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { CartContext } from "../context/CartContext";
 
-function Cart() {
+function Cart({ onCheckout }) {
   const {
     cartItems,
     increaseQuantity,
@@ -29,9 +29,7 @@ function Cart() {
 
           <p>Price: ₹{item.price}</p>
 
-          <p>
-            Quantity: {item.quantity}
-          </p>
+          <p>Quantity: {item.quantity}</p>
 
           <button onClick={() => decreaseQuantity(item._id)}>
             -
@@ -55,7 +53,9 @@ function Cart() {
 
       <h3>Total: ₹{getCartTotal()}</h3>
 
-      <button>Proceed to Checkout</button>
+      <button onClick={onCheckout}>
+        Proceed to Checkout
+      </button>
     </div>
   );
 }

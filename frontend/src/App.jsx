@@ -2,6 +2,8 @@ import { useContext, useState } from "react";
 import Login from "./pages/Login";
 import Menu from "./pages/Menu";
 import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import Payment from "./pages/Payment";
 import { AuthContext } from "./context/AuthContext";
 import { CartContext } from "./context/CartContext";
 
@@ -9,11 +11,26 @@ function App() {
   const { user, logout } = useContext(AuthContext);
   const { cartItems } = useContext(CartContext);
 
-  const [showCart, setShowCart] = useState(false);
+  const [page, setPage] = useState("menu");
+  const [deliveryDetails, setDeliveryDetails] = useState(null);
 
   if (!user) {
     return <Login />;
   }
+
+  const handleCheckout = () => {
+    setPage("checkout");
+  };
+
+  const handlePayment = (details) => {
+    setDeliveryDetails(details);
+    setPage("payment");
+  };
+
+  const handleOrderPlaced = () => {
+    alert("Order placed successfully!");
+    setPage("menu");
+  };
 
   return (
     <div>
@@ -24,13 +41,28 @@ function App() {
 
       <button onClick={logout}>Logout</button>
 
-      <button onClick={() => setShowCart(!showCart)}>
+      <button onClick={() => setPage("cart")}>
         🛒 Cart ({cartItems.length})
       </button>
 
       <hr />
 
-      {showCart ? <Cart /> : <Menu />}
+      {page === "menu" && <Menu />}
+
+      {page === "cart" && (
+        <Cart onCheckout={handleCheckout} />
+      )}
+
+      {page === "checkout" && (
+        <Checkout onPayment={handlePayment} />
+      )}
+
+      {page === "payment" && (
+        <Payment
+          deliveryDetails={deliveryDetails}
+          onOrderPlaced={handleOrderPlaced}
+        />
+      )}
     </div>
   );
 }
