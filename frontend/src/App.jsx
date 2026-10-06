@@ -6,6 +6,7 @@ import Checkout from "./pages/Checkout";
 import Payment from "./pages/Payment";
 import { AuthContext } from "./context/AuthContext";
 import { CartContext } from "./context/CartContext";
+import MyOrders from "./pages/MyOrders";
 
 function App() {
   const { user, logout } = useContext(AuthContext);
@@ -44,6 +45,9 @@ function App() {
       <button onClick={() => setPage("cart")}>
         🛒 Cart ({cartItems.length})
       </button>
+      <button onClick={() => setPage("orders")}>
+  📋 My Orders
+</button>
 
       <hr />
 
@@ -63,6 +67,7 @@ function App() {
           onOrderPlaced={handleOrderPlaced}
         />
       )}
+      {page === "orders" && <MyOrders />}
     </div>
   );
 }
