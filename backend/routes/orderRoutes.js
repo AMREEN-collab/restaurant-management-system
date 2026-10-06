@@ -1,6 +1,7 @@
 import express from "express";
 import Order from "../models/Order.js";
 import protect from "../middleware/authMiddleware.js";
+import adminOnly from "../middleware/adminMiddleware.js";
 
 const router = express.Router();
 
@@ -64,6 +65,70 @@ router.get("/my-orders", protect, async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Failed to fetch orders",
+      error: error.message,
+    });
+  }
+});
+// Get all orders for admin
+router.get("/admin/all", protect, adminOnly, async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate("user", "name email")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      count: orders.length,
+      orders,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch all orders",
+      error: error.message,
+    });
+  }
+});
+// Update order status for admin
+router.put("/admin/:id/status", protect, adminOnly, async (req, res) => {
+  try {
+    const { orderStatus } = req.body;
+
+    const allowedStatuses = [
+      "Pending",
+      "Confirmed",
+      "Preparing",
+      "Out for Delivery",
+      "Delivered",
+    ];
+
+    if (!allowedStatuses.includes(orderStatus)) {
+      return res.status(400).json({
+        message: "Invalid order status",
+      });
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      {
+        orderStatus,
+      },
+      {
+        new: true,
+      }
+    );
+
+    if (!order) {
+      return res.status(404).json({
+        message: "Order not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "Order status updated successfully",
+      order,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to update order status",
       error: error.message,
     });
   }

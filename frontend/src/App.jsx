@@ -8,6 +8,7 @@ import { AuthContext } from "./context/AuthContext";
 import { CartContext } from "./context/CartContext";
 import MyOrders from "./pages/MyOrders";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminOrders from "./pages/AdminOrders";
 
 function App() {
   const { user, logout } = useContext(AuthContext);
@@ -54,6 +55,11 @@ function App() {
     👨‍💼 Admin Dashboard
   </button>
 )}
+{user.role === "admin" && (
+  <button onClick={() => setPage("admin-orders")}>
+    📦 Manage Orders
+  </button>
+)}
 
       <hr />
 
@@ -76,6 +82,9 @@ function App() {
       {page === "orders" && <MyOrders />}
       {page === "admin" && user.role === "admin" && (
   <AdminDashboard />
+)}
+{page === "admin-orders" && user.role === "admin" && (
+  <AdminOrders />
 )}
     </div>
   );
