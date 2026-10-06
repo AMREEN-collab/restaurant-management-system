@@ -7,6 +7,7 @@ import Payment from "./pages/Payment";
 import { AuthContext } from "./context/AuthContext";
 import { CartContext } from "./context/CartContext";
 import MyOrders from "./pages/MyOrders";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   const { user, logout } = useContext(AuthContext);
@@ -48,6 +49,11 @@ function App() {
       <button onClick={() => setPage("orders")}>
   📋 My Orders
 </button>
+       {user.role === "admin" && (
+  <button onClick={() => setPage("admin")}>
+    👨‍💼 Admin Dashboard
+  </button>
+)}
 
       <hr />
 
@@ -68,6 +74,9 @@ function App() {
         />
       )}
       {page === "orders" && <MyOrders />}
+      {page === "admin" && user.role === "admin" && (
+  <AdminDashboard />
+)}
     </div>
   );
 }
